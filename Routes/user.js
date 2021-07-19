@@ -3,8 +3,6 @@ import userHandler from '../Controllers/user';
 
 // auth middleware for user
 import isLoggedInUser from '../Middlewares/loggedIn';
-// validations
-import userValidator from '../validations/user';
 
 const eventRouter = express.Router();
 
@@ -16,6 +14,6 @@ eventRouter.delete(
 	userHandler.deleteUser,
 );
 
-eventRouter.patch('/:id', isLoggedInUser.isLoggedIn, userValidator.editUser, userHandler.editUser);
+eventRouter.patch('/', isLoggedInUser.isLoggedIn, userHandler.editUser);
 
 export default eventRouter;

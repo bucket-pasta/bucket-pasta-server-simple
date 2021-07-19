@@ -10,10 +10,24 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		tabs: [{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'tabs',
-		}]
+		// tabsss: [
+		// 	{
+		// 		displayName: String,
+		// 		tags: [],
+		// 		theme: String,
+		// 		type: String,
+		// 		pasties: [
+		// 			{
+		// 				displayName: String,
+		// 				tags: [],
+		// 				theme: String,
+		// 				type: String,
+		// 				content: String
+		// 			}
+		// 		]
+		// 	}
+		// ],
+		tabs: []
 	},
 	{
 		timestamps: true,

@@ -43,10 +43,6 @@ app.use('/signup', Router.SignupRouter);
 app.use('/signin', Router.SigninRouter);
 
 app.use('/users', Router.UserRouter);
-
-app.use('/tabs', Router.TabsRouter);
-
-app.use('/pasties', Router.PastiesRouter);
 // i have implemented it in signup controller like this {next(new Error('Image is required'))}
 app.use(errorHandler);
 

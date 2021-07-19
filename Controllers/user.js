@@ -1,20 +1,23 @@
 import status from 'http-status';
 import Model from '../Models/Model';
 
-const getUsersObject = (req, res) => {
-	Model.UserModel.find()
-		.populate({
-			path: 'tabs',
-			populate: [{ path: 'pasties', select: 'theme content type tags displayName' }],
-		})
+const getUsersObject = (req, res, next) => {
+	Model.UserModel.findOne({ _id: req.user._id })
+		// .populate({
+		// 	path: 'tabs',
+		// 	populate: [{ path: 'pasties', select: 'theme content type tags displayName' }],
+		// })
 		.then(userObject => {
-			res.status(200).send({ userObject });
+			if (userObject) {
+				res.status(200).send({ userObject });
+			} else {
+				res.status(500);
+				next(new Error('User Not Found!'));
+			}
 		})
 		.catch(err => {
-			res.status(500).send({
-				Message: 'No Events!',
-				err,
-			});
+			res.status(500);
+			next(new Error('Internal Server Error!'));
 		});
 };
 
@@ -33,20 +36,40 @@ const deleteUser = (req, res) => {
 	});
 };
 
-const editUser = (req, res) => {
-	const { id } = req.params;
-	const query = { $set: { username: req.body.username } };
-	Model.UserModel.findByIdAndUpdate(id, query, { new: true }, (err, result) => {
-		if (err) {
-			res.status(500);
-			next(new Error('Internal Server Error!'));
-		} else {
-			res.status(200).send({
-				Message: 'Successfully Updated.',
-				result,
+const editUser = (req, res, next) => {
+	const { _id } = req.user;
+	const query = { $set: req.body };
+	Model.UserModel.find({ _id }).then(users => {
+		if (users.length > 0) {
+			users[0].username = req.body.username;
+			users[0].tabs = [...req.body.tabs];
+			users[0].save().then(updatedUser => {
+				res.status(200).send({ updatedUser });
+			}).catch(err => {
+				console.log(err);
+				res.status(500);
+				next(new Error('Internal Server Error!'));
 			});
+		} else {
+			res.status(404);
+			next(new Error('User not found!'));
 		}
+	}).catch(err => {
+		res.status(500);
+		next(new Error('Internal Server Error!'));
 	});
+	// Model.UserModel.findByIdAndUpdate(_id, query, { new: true }, (err, result) => {
+	// 	if (err) {
+	// 		console.log(err);
+	// 		res.status(500);
+	// 		next(new Error('Internal Server Error!'));
+	// 	} else {
+	// 		res.status(200).send({
+	// 			Message: 'Successfully Updated.',
+	// 			result,
+	// 		});
+	// 	}
+	// });
 };
 
 export default { getUsersObject, editUser, deleteUser };
