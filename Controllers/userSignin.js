@@ -11,11 +11,12 @@ const createToken = (user, res, next) => {
 	};
 	console.log(payload);
 	// create a token
+	const expiration = process.env.TOKENEXPIRATION
 	jwt.sign(
 		payload,
 		process.env.JwtSecret,
 		{
-			expiresIn: '365d',
+			expiresIn: expiration,
 		},
 		(err, token) => {
 			// Error Create the Token

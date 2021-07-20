@@ -35,15 +35,17 @@ const deleteUser = (req, res) => {
 		};
 	});
 };
-
+// TODO: remove password from returned object
+// TODO: remove users ability to arbitrarily change their username/password hash
 const editUser = (req, res, next) => {
 	const { _id } = req.user;
 	const query = { $set: req.body };
 	Model.UserModel.find({ _id }).then(users => {
 		if (users.length > 0) {
-			users[0].username = req.body.username;
+			// users[0].username = req.body.username;
 			users[0].tabs = [...req.body.tabs];
 			users[0].save().then(updatedUser => {
+				updatedUser.password = "This is not the password, no peeking"
 				res.status(200).send({ updatedUser });
 			}).catch(err => {
 				console.log(err);
